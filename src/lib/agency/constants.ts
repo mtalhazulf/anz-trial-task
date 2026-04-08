@@ -1,0 +1,1 @@
+export const ACTIVE_AGENCY_COOKIE = "active_agency_id";
