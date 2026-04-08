@@ -85,11 +85,7 @@ export default function DashboardSidebar({
   };
 
   const switcherRef = useRef<HTMLDivElement>(null);
-  useClickOutside(
-    switcherRef,
-    () => setAgencyMenuOpen(false),
-    agencyMenuOpen
-  );
+  useClickOutside(switcherRef, () => setAgencyMenuOpen(false), agencyMenuOpen);
 
   const ownedSet = new Set(ownedAgencyIds);
   const activeName =
@@ -157,6 +153,24 @@ export default function DashboardSidebar({
 
   const isCollapsed = collapsed && !mobileOpen;
 
+  const collapseGridStyle = {
+    display: "grid",
+    gridTemplateColumns: isCollapsed ? "auto 0fr" : "auto minmax(0, 1fr)",
+    columnGap: isCollapsed ? "0px" : "8px",
+    justifyContent: "center",
+    alignItems: "center",
+    transition:
+      "grid-template-columns 320ms cubic-bezier(0.32, 0.72, 0, 1), column-gap 320ms cubic-bezier(0.32, 0.72, 0, 1)",
+  } as const;
+
+  const labelFadeStyle = {
+    opacity: isCollapsed ? 0 : 1,
+    transform: isCollapsed ? "translateX(-4px)" : "translateX(0)",
+    transition:
+      "opacity 180ms ease-out, transform 280ms cubic-bezier(0.32, 0.72, 0, 1)",
+    pointerEvents: isCollapsed ? ("none" as const) : undefined,
+  };
+
   const handleAsideClick = (e: React.MouseEvent<HTMLElement>) => {
     if (!isCollapsed) return;
     const target = e.target as HTMLElement;
@@ -167,13 +181,11 @@ export default function DashboardSidebar({
 
   const sidebarInner = (
     <>
-      <div
-        className="h-14 flex items-center border-b divider justify-between gap-2 px-3"
-      >
+      <div className="h-14 border-b divider px-2" style={collapseGridStyle}>
         <button
           type="button"
           onClick={toggleCollapsed}
-          className="group relative w-9 h-9 grid place-items-center rounded-md transition-colors hover:bg-(--color-bg-hover) shrink-0"
+          className="group relative w-8 h-8 grid place-items-center rounded-md transition-colors hover:bg-(--color-bg-hover) shrink-0"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
@@ -193,52 +205,41 @@ export default function DashboardSidebar({
           )}
         </button>
         <div
-          className="min-w-0 flex-1 overflow-hidden"
-          style={{
-            opacity: isCollapsed ? 0 : 1,
-            transform: isCollapsed ? "translateX(-4px)" : "translateX(0)",
-            transition:
-              "opacity 200ms ease-out, transform 280ms cubic-bezier(0.32, 0.72, 0, 1)",
-            pointerEvents: isCollapsed ? "none" : undefined,
-          }}
+          className="min-w-0 overflow-hidden flex items-center gap-2"
+          style={labelFadeStyle}
         >
-          <p
-            className="text-[14px] font-semibold tracking-tight leading-tight whitespace-nowrap"
-            style={{ color: "var(--color-text)" }}
+          <div className="min-w-0 flex-1">
+            <p
+              className="text-[14px] font-semibold tracking-tight leading-tight whitespace-nowrap"
+              style={{ color: "var(--color-text)" }}
+            >
+              Voyager
+            </p>
+            <p className="text-[10.5px] leading-tight text-muted whitespace-nowrap">
+              Agency Booking Portal
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={toggleCollapsed}
+            className="hidden md:inline-flex w-7 h-7 items-center justify-center rounded-md transition-colors hover:bg-(--color-bg-hover) shrink-0"
+            style={{ color: "var(--color-text-muted)" }}
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar"
+            tabIndex={isCollapsed ? -1 : 0}
           >
-            Voyager
-          </p>
-          <p className="text-[10.5px] leading-tight text-muted whitespace-nowrap">
-            Agency Booking Portal
-          </p>
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          className="hidden md:inline-flex w-7 h-7 items-center justify-center rounded-md transition-colors hover:bg-(--color-bg-hover) shrink-0"
-          style={{
-            color: "var(--color-text-muted)",
-            opacity: isCollapsed ? 0 : 1,
-            pointerEvents: isCollapsed ? "none" : undefined,
-            transition: "opacity 180ms ease-out",
-          }}
-          aria-label="Collapse sidebar"
-          title="Collapse sidebar"
-          tabIndex={isCollapsed ? -1 : 0}
-        >
-          <PanelLeftClose className="w-4 h-4" />
-        </button>
       </div>
 
-      <div
-        className="relative px-3 pt-3 pb-2"
-        ref={switcherRef}
-      >
+      <div className="relative px-2 pt-3 pb-2" ref={switcherRef}>
         <button
           type="button"
           onClick={() => setAgencyMenuOpen((v) => !v)}
           disabled={pending}
-          className="w-full flex items-center gap-2.5 px-1 py-2 rounded-md text-left transition-colors hover:bg-(--color-bg-hover) focus-ring"
+          className="w-full px-1 py-2 rounded-md text-left transition-colors hover:bg-(--color-bg-hover) focus-ring"
+          style={collapseGridStyle}
           aria-label={isCollapsed ? activeName : undefined}
           title={isCollapsed ? activeName : undefined}
         >
@@ -255,14 +256,8 @@ export default function DashboardSidebar({
             {activeName.charAt(0).toUpperCase()}
           </div>
           <div
-            className="min-w-0 flex-1 overflow-hidden flex items-center gap-2"
-            style={{
-              opacity: isCollapsed ? 0 : 1,
-              transform: isCollapsed ? "translateX(-4px)" : "translateX(0)",
-              transition:
-                "opacity 200ms ease-out, transform 280ms cubic-bezier(0.32, 0.72, 0, 1)",
-              pointerEvents: isCollapsed ? "none" : undefined,
-            }}
+            className="min-w-0 overflow-hidden flex items-center gap-2"
+            style={labelFadeStyle}
           >
             <div className="min-w-0 flex-1">
               <p
@@ -385,9 +380,9 @@ export default function DashboardSidebar({
         )}
       </div>
 
-      <div className="border-t divider mx-3" />
+      <div className="border-t divider mx-2" />
 
-      <nav className="flex-1 py-3 overflow-y-auto overflow-x-hidden px-3">
+      <nav className="flex-1 py-3 overflow-y-auto overflow-x-hidden px-2">
         <p
           className="px-2 mb-1 text-[11px] font-medium uppercase tracking-wider text-muted whitespace-nowrap"
           style={{
@@ -409,8 +404,9 @@ export default function DashboardSidebar({
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] font-medium transition-colors whitespace-nowrap overflow-hidden"
+                className="px-2 py-1.5 rounded-md text-[13px] font-medium transition-colors whitespace-nowrap overflow-hidden"
                 style={{
+                  ...collapseGridStyle,
                   color: active
                     ? "var(--color-text)"
                     : "var(--color-text-secondary)",
@@ -428,16 +424,7 @@ export default function DashboardSidebar({
                       : "var(--color-text-muted)",
                   }}
                 />
-                <span
-                  style={{
-                    opacity: isCollapsed ? 0 : 1,
-                    transform: isCollapsed
-                      ? "translateX(-4px)"
-                      : "translateX(0)",
-                    transition:
-                      "opacity 200ms ease-out, transform 280ms cubic-bezier(0.32, 0.72, 0, 1)",
-                  }}
-                >
+                <span className="overflow-hidden" style={labelFadeStyle}>
                   {link.label}
                 </span>
               </Link>
@@ -446,12 +433,15 @@ export default function DashboardSidebar({
         </div>
       </nav>
 
-      <div className="py-3 border-t divider px-3">
+      <div className="py-3 border-t divider px-2">
         <button
           type="button"
           onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] font-medium transition-colors hover:bg-(--color-bg-hover) whitespace-nowrap overflow-hidden"
-          style={{ color: "var(--color-text-secondary)" }}
+          className="w-full px-2 py-1.5 rounded-md text-[13px] font-medium transition-colors hover:bg-(--color-bg-hover) whitespace-nowrap overflow-hidden"
+          style={{
+            ...collapseGridStyle,
+            color: "var(--color-text-secondary)",
+          }}
           aria-label={isCollapsed ? "Sign out" : undefined}
           title={isCollapsed ? "Sign out" : undefined}
         >
@@ -459,14 +449,7 @@ export default function DashboardSidebar({
             className="w-4 h-4 shrink-0"
             style={{ color: "var(--color-text-muted)" }}
           />
-          <span
-            style={{
-              opacity: isCollapsed ? 0 : 1,
-              transform: isCollapsed ? "translateX(-4px)" : "translateX(0)",
-              transition:
-                "opacity 200ms ease-out, transform 280ms cubic-bezier(0.32, 0.72, 0, 1)",
-            }}
-          >
+          <span className="overflow-hidden" style={labelFadeStyle}>
             Sign out
           </span>
         </button>
@@ -515,7 +498,10 @@ export default function DashboardSidebar({
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
-        style={{ background: "rgba(9, 9, 11, 0.45)", backdropFilter: "blur(2px)" }}
+        style={{
+          background: "rgba(9, 9, 11, 0.45)",
+          backdropFilter: "blur(2px)",
+        }}
         onClick={() => setMobileOpen(false)}
       />
 
@@ -524,13 +510,14 @@ export default function DashboardSidebar({
         className={`
           fixed md:static inset-y-0 left-0 z-50
           flex flex-col min-h-screen
-          w-[280px] md:w-auto
+          md:shrink-0 md:min-w-0
           border-r divider overflow-x-hidden
-          ${isCollapsed ? "md:w-16 cursor-pointer" : "md:w-[260px]"}
+          ${isCollapsed ? "cursor-pointer" : ""}
         `}
         style={{
           background: "var(--color-bg)",
-          willChange: "transform",
+          willChange: "transform, width",
+          width: isDesktop ? (isCollapsed ? 48 : 240) : 280,
           transform: isDesktop
             ? "translateX(0)"
             : mobileOpen
@@ -538,9 +525,10 @@ export default function DashboardSidebar({
               : "translateX(-105%)",
           transition:
             "transform 360ms cubic-bezier(0.32, 0.72, 0, 1), width 320ms cubic-bezier(0.32, 0.72, 0, 1)",
-          boxShadow: mobileOpen && !isDesktop
-            ? "0 0 60px -10px rgba(0,0,0,0.25)"
-            : undefined,
+          boxShadow:
+            mobileOpen && !isDesktop
+              ? "0 0 60px -10px rgba(0,0,0,0.25)"
+              : undefined,
         }}
       >
         <div className="md:hidden flex justify-end p-2 border-b divider">
