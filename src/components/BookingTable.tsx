@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Booking } from "@/lib/types";
 import StatusBadge from "./StatusBadge";
@@ -18,7 +19,12 @@ export default function BookingTable({
 }) {
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [editing, setEditing] = useState<Booking | null>(null);
+  const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    router.prefetch("/dashboard/new");
+  }, [router]);
 
   useEffect(() => {
     setBookings(initialBookings);

@@ -56,6 +56,11 @@ export default function DashboardSidebar({
   }, []);
 
   useEffect(() => {
+    router.prefetch("/dashboard");
+    router.prefetch("/dashboard/new");
+  }, [router]);
+
+  useEffect(() => {
     if (typeof document === "undefined") return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = mobileOpen ? "hidden" : prev || "";
