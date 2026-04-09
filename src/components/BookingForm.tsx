@@ -44,7 +44,6 @@ export default function BookingForm() {
 
       toast.success("Booking created");
       router.push("/dashboard");
-      router.refresh();
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "Failed to create booking";

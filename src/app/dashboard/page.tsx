@@ -5,8 +5,6 @@ import BookingTable from "@/components/BookingTable";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
 export default async function DashboardPage() {
   const ctx = await getDashboardAgencyContext();
   if (!ctx) {

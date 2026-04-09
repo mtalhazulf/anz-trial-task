@@ -59,7 +59,6 @@ export default function AuthForm() {
         toast.success("Account created");
       }
       router.push("/dashboard");
-      router.refresh();
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "An error occurred";

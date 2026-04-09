@@ -41,31 +41,24 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && request.nextUrl.pathname.startsWith("/dashboard")) {
-    const { data: members } = await supabase
-      .from("agency_members")
-      .select("agency_id")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: true });
-
-    const ids = members?.map((m) => m.agency_id) ?? [];
     const cookieVal = request.cookies.get(ACTIVE_AGENCY_COOKIE)?.value;
+    if (!cookieVal) {
+      const { data: members } = await supabase
+        .from("agency_members")
+        .select("agency_id")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true });
 
-    if (ids.length === 0) {
-      if (cookieVal) {
-        supabaseResponse.cookies.set(ACTIVE_AGENCY_COOKIE, "", {
+      const ids = members?.map((m) => m.agency_id) ?? [];
+      if (ids.length > 0) {
+        supabaseResponse.cookies.set(ACTIVE_AGENCY_COOKIE, ids[0], {
           path: "/",
-          maxAge: 0,
+          maxAge: 60 * 60 * 24 * 365,
+          sameSite: "lax",
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
         });
       }
-    } else if (!cookieVal || !ids.includes(cookieVal)) {
-      const nextId = ids[0];
-      supabaseResponse.cookies.set(ACTIVE_AGENCY_COOKIE, nextId, {
-        path: "/",
-        maxAge: 60 * 60 * 24 * 365,
-        sameSite: "lax",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      });
     }
   }
 
