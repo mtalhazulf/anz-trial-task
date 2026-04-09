@@ -445,7 +445,7 @@ export default function BookingTable({
           )}
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
           <table className="table">
             <thead>
               <tr>
